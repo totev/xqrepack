@@ -1,4 +1,4 @@
-xqrepack
+xqrepack-fork
 =========
 
 These scripts allow you to modify the *Xiaomi AX3600 (R3600)* and *Xiaomi AX1800 (RM1800)* firmware image to make sure SSH and UART access is always enabled.
@@ -11,6 +11,12 @@ Between preserving stock functionality and privacy concerns, I would err on the 
 Note that in order to get SSH access to the router initially, you need to [downgrade the AX3600 to version 1.0.17 and exploit it first](https://forum.openwrt.org/t/adding-openwrt-support-for-ax3600/55049/123) / [downgrade the AX1800 to version 1.0.378 (or below) and exploit it first](https://forum.openwrt.org/t/adding-openwrt-support-for-ax3600/55049/123).
 Once you have SSH, you can use this repacking method to maintain SSH access for newer versions.
 
+*Fork*: This fork uses docker as a building environment so no dependencies or building environment is required.
+
+Requirements - Docker
+==============
+A recent version of docker.
+
 Requirements
 ==============
 
@@ -20,6 +26,13 @@ You will need to install the following tools:
 - ubinize
 - unsquashfs / mksquashfs
 - fakeroot
+
+
+
+Usage - Docker
+=======
+
+Simply execute `./docker-build.sh` which will build the firmware file and put it into the `backed-firmware/` folder.
 
 Usage
 =======
@@ -109,7 +122,7 @@ License
 
 **xqrepack** is licensed under **the 3-clause ("modified") BSD License**.
 
-Copyright (C) 2020-2021 Darell Tan
+Copyright (C) 2020-2021 Darell Tan, 2021 Dobroslav Totev
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
