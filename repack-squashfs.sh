@@ -42,6 +42,7 @@ sed -i 's/romVersion%>/& xqrepack/;' "$FSDIR/usr/lib/lua/luci/view/web/inc/foote
 
 # stop resetting root password
 sed -i '/set_user(/a return 0' "$FSDIR/etc/init.d/system"
+sed -i 's/flg_init_pwd=.*/flg_init_pwd=0/' "$FSDIR/etc/init.d/boot_check"
 
 # make sure our backdoors are always enabled by default
 sed -i '/ssh_en/d;' "$FSDIR/usr/share/xiaoqiang/xiaoqiang-reserved.txt"
@@ -102,6 +103,25 @@ done
 
 # as a last-ditch effort, change the *.miwifi.com hostnames to localhost
 sed -i 's@\w\+.miwifi.com@localhost@g' $FSDIR/etc/config/miwifi
+
+# get hardware name
+HWNAME=`sed -n "/option\s\+HARDWARE/ s/.*'\(.*\)'/\1/g p" $FSDIR/usr/share/xiaoqiang/xiaoqiang_version`
+[ -n "$HWNAME" ] && echo "detected hw $HWNAME" || echo "[WARN] cant find hw name in firmware"
+
+# apply hw-specific patches
+PATCHES=
+[ -n "$HWNAME" ] && [ -d "patches-$HWNAME" ] && PATCHES=patches-$HWNAME/*.patch
+
+# generic patches
+[ -d patches ] && PATCHES="$PATCHES patches/*.patch"
+
+# apply patches
+for p in $PATCHES; do
+	>&2 echo "applying patch $p..."
+	patch -d "$FSDIR" -s -p1 < $p
+
+	[ $? -ne 0 ] && { echo "patch $p didnt apply cleanly - aborting."; exit 1; }
+done
 
 >&2 echo "repacking squashfs..."
 rm -f "$IMG.new"
